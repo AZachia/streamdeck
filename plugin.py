@@ -7,6 +7,8 @@ class Plugin(ABC):
         self.version = version
         self.actions = {}
         self.components = {}
+        self.scripts = {}
+        self.styles = []
 
 
     def register_action(self, name: str, action: dict):
@@ -28,20 +30,59 @@ class Plugin(ABC):
             raise ValueError(f"Le composant '{name}' est déjà enregistré.")
         self.components[name] = component
         
+
+    def register_script(self, name: str, script: dict):
+        """
+        name = nom du script
+        valeur = dict
+        """
+        if name in self.scripts:
+            raise ValueError(f"Le script '{name}' est déjà enregistré.")
+        self.scripts[name] = script
+        
+    def register_style(self, style: str):
+        """
+        style = nom du style
+        valeur = str
+        """
+        if style in self.styles:
+            raise ValueError(f"Le style '{style}' est déjà enregistré.")
+        self.styles.append(style)
+    
+    
+    def get_styles(self):
+        """
+        Renvoie la liste des styles enregistrés.
+        """
+        return "\n".join(self.styles)
+        
         
     
-    def execute_action(self, action_name, *args, **kwargs):
+    def execute_action(self, action_name, args):
         """
         Exécute l'action spécifiée par action_name avec les arguments fournis.
         """
         action = self.actions.get(action_name)
         if action:
             if callable(action['handler']):
-                return action['handler'](*args, **kwargs)
+                return action['handler'](args)
             else:
                 raise ValueError(f"L'action '{action_name}' n'est pas callable.")
         else:
             raise ValueError(f"L'action '{action_name}' n'est pas enregistrée.")
+        
+    def generate_component(self, component_name, args):
+        """
+        Génère le composant spécifié par component_name avec les arguments fournis.
+        """
+        component = self.components.get(component_name)
+        if component:
+            if callable(component['handler']):
+                return component['handler'](args)
+            else:
+                raise ValueError(f"Le composant '{component_name}' n'est pas callable.")
+        else:
+            raise ValueError(f"Le composant '{component_name}' n'est pas enregistré.")
             
 
     def get_metadata(self):

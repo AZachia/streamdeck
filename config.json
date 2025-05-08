@@ -1,42 +1,61 @@
 {
-    "title": "Deck",
-    "icon": "https://images.icon-icons.com/3053/PNG/512/elgato_stream_deck_macos_bigsur_icon_190205.png",
+    "title": "Stream Deck",
+    "icon": "https://cdn-icons-png.flaticon.com/512/25/25231.png",
     "background": "https://img.freepik.com/free-vector/black-background-with-wavy-lines_52683-76524.jpg?semt=ais_hybrid&w=740",
-    "lines": 4,
-    "columns": 6,
-    "keys": [
+    "components": [
         {
-            "label": "Hello",
-            "plugin": "helloworld",
-            "command": "hello",
-            "color": "#1DB954",
-            "icon": "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_White.png",
-            "position": {
-                "row": 1,
-                "col": 1
-            }
-        },
-        {
-            "label": "Hello",
-            "plugin": "helloworld",
-            "command": "hello",
-            "color": "#1DB954",
-            "position": {
-                "row": 3,
-                "col": 2
-            }
-        },
-        {
-            "label": "Google",
-            "plugin": "webopener",
-            "command": "open",
+            "plugin": "core",
+            "component": "background",
             "args": {
-                "url": "https://www.google.com"
-            },
-            "color": "#1DB954",
-            "position": {
-                "row": 2,
-                "col": 2
+                "color": "#000000",
+                "image": "https://img.freepik.com/free-vector/black-background-with-wavy-lines_52683-76524.jpg?semt=ais_hybrid&w=740"
+            }
+        },
+
+        {
+            "plugin": "core",
+            "component": "keys",
+            "args": {
+                "row": 4,
+                "col": 6,
+                "components": [
+                    {
+                        "plugin": "core",
+                        "component": "key",
+                        "args": {
+                            "label": "Google",
+                            "icon": "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_White.png",
+                            "position": {
+                                "row": 1,
+                                "col": 1
+                            },
+                            "plugin": "webopener",
+                            "command": "open",
+                            "args": {
+                                "url": "https://www.google.com"
+                            }
+                        }
+                    },
+
+                    {
+                        "plugin": "core",
+                        "component": "key",
+                        "args": {
+                            "label": "Google V2",
+                            "color": "#1DB954",
+                            "icon": "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_White.png",
+                            "position": {
+                                "row": 2,
+                                "col": 2
+                            },
+                            "plugin": "webopener",
+                            "command": "open",
+                            "args": {
+                                "url": "https://www.google.com"
+                            }
+                        }
+                    }
+                ]
             }
         }
     ]

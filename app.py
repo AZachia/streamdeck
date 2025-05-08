@@ -3,7 +3,7 @@ from flask_socketio import SocketIO, emit
 import os
 import json
 
-from plugin_manager import PluginManager
+from plugin_manager import plugin_manager
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -25,13 +25,27 @@ else:
 print("Configuration loaded:", config)
 
 
-plugin_manager = PluginManager()
-plugin_manager.load_plugins()
-print("Plugins loaded:", plugin_manager.all_plugins())
-
 @app.route('/')
 def index():
-    return render_template('index.html', config=config)
+    
+    
+    styles = plugin_manager.generate_styles()
+    
+    
+    html = ""
+    for componant in config.get("components", []):
+        if componant["plugin"] in plugin_manager.plugins:
+            print(plugin_manager.generate_component(
+                componant.get("plugin"),
+                componant.get("component"),
+                componant.get("args", {})
+            ))
+            html += plugin_manager.generate_component(
+                componant.get("plugin"),
+                componant.get("component"),
+                componant.get("args", {})
+            )
+    return render_template('index.html', styles=styles, html=html)
 
 @app.route('/config')
 def config_page():
@@ -50,7 +64,7 @@ def handle_connect():
 def handle_command(data):
     print('Received command:', data)
     plugin, command, args = data
-    plugin_manager.execute_plugin_action(plugin, command, **args)
+    plugin_manager.execute_plugin_action(plugin, command, args)
     
     
 @socketio.on('disconnect')

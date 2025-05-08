@@ -6,11 +6,6 @@ body {
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
     color: white;
     font-family: sans-serif;
     /* overflow: hidden; */

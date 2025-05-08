@@ -21,9 +21,9 @@ class WebOpenerPlugin(Plugin):
             },
         )
 
-    def open(self, url):
+    def open(self, args):
         """
         Open a web page in the default browser.
         """
 
-        webbrowser.open(url)
+        webbrowser.open(args.get("url", ""))

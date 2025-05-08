@@ -5,25 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style.css">
-    
-    <link rel="icon" href="{{ config.icon }}" type="image/x-icon">
+
+    <link rel="icon" href="" type="image/x-icon">
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-    <title>{{ config.title }}</title>
+    <title>Stream Deck</title>
+
+
+    <style>
+        {{ styles | safe }}
+    </style>
+
 </head>
 
 <body style="background-image: url('{{ config.background }}');">
-    <div class="grid" style="grid-template-columns: repeat({{ config.columns }}, 1fr); grid-template-rows: repeat({{ config.lines }}, 1fr);">
-        {% for key in config["keys"] %}
-        <button onclick='sendCommand("{{ key.plugin }}", "{{ key.command }}", {{ key.args | default({}) | tojson | safe }})'
-            class="key" style="background-color: {{ key.color }}; color: {{ key.text_color | default(" white") }};
-            grid-column-start: {{ key.position.col }}; grid-row-start: {{ key.position.row }};'>
-            {% if key.icon %}
-                <img src="{{ key.icon }}" alt="{{ key.label }}" class="icon">
-            {% endif %}
-            <span class="label">{{ key.label }}</span>
-        </button>
-        {% endfor %}
-    </div>
+    
+
+    {{ html | safe }}
 
 
     <script>
@@ -31,16 +28,25 @@
         // const socket = io('http://localhost:5000');
 
         function sendCommand(plugin, command, args = {}) {
-            socket.emit('command', [plugin, command, args]);
-            console.log(`Command sent: ${plugin}, ${command}, ${JSON.stringify(args)}`);
+
+            if (["javascript", "js"].includes(plugin)) {
+                // TODO
+
+            }
+
+            else {
+
+                socket.emit('command', [plugin, command, args]);
+                console.log(`Command sent: ${plugin}, ${command}, ${JSON.stringify(args)}`);
+            }
         }
 
-        socket.on('response', function(data) {
+        socket.on('response', function (data) {
             console.log(data);
         });
 
 
-        document.querySelector('body').addEventListener('click', function(event) {
+        document.querySelector('body').addEventListener('click', function (event) {
             // if not fullescreen 
             if (!document.fullscreenElement) {
                 // request fullscreen
