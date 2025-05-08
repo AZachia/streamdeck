@@ -35,16 +35,13 @@ def index():
     html = ""
     for componant in config.get("components", []):
         if componant["plugin"] in plugin_manager.plugins:
-            print(plugin_manager.generate_component(
-                componant.get("plugin"),
-                componant.get("component"),
-                componant.get("args", {})
-            ))
             html += plugin_manager.generate_component(
                 componant.get("plugin"),
                 componant.get("component"),
                 componant.get("args", {})
             )
+            
+            
     return render_template('index.html', styles=styles, html=html)
 
 @app.route('/config')

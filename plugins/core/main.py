@@ -68,6 +68,9 @@ class CorePlugin(Plugin):
                 box-sizing: border-box;
                 justify-items: center;
                 align-items: center;
+                height: 100vh;
+                width: 100vw;
+                grid-auto-rows: 1fr;
             }
             
             .key {
@@ -81,9 +84,20 @@ class CorePlugin(Plugin):
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                witdh: 100%;
+                height: 100%;
+                min-width: 10px;
+                min-height: 10px;
+                aspect-ratio: 1 / 1;
             }
-            """
             
+            .key .icon {
+                max-width: 80%;
+                max-height: 80%;
+                object-fit: contain;
+            }
+
+            """
         )
     
     
@@ -122,17 +136,17 @@ class CorePlugin(Plugin):
     
     def key(self, args):
         html = f"""
-        <button onclick='sendCommand("{ args.get("plugin") }", "{ args.get("command") }", { json.dumps(args.get("args")) })'
-            class="key" style="background-color: { args.get("color") }; color: { args.get("text_color", "#FFFFFF") };
-            grid-column-start: { args.get("position", {}).get("col") }; grid-row-start: { args.get("position", {}).get("row") };'>"""
+        <button onclick='sendCommand("{args.get("plugin")}", "{args.get("command")}", {json.dumps(args.get("args"))})'
+            class="key" style="background-color: {args.get("color", "#007BFF")}; color: {args.get("text_color", "#FFFFFF")};
+            grid-column-start: {args.get("position", {}).get("col")}; grid-row-start: {args.get("position", {}).get("row")};">"""
 
         if args.get("icon"):
             html += f"""
-                <img src="{ args.get("icon") }" alt="{ args.get("label") }" class="icon">"""
-        html += f"""
-            <span class="label">{ args.get("label") }</span>
-        </button>
-        """
+                <img src="{ args.get('icon') }" alt="{ args.get("label") }" class="icon">"""
+        # html += f"""
+        #     <span class="label">{ args.get("label") }</span>
+        # </button>
+        # """
 
         return html
     

@@ -16,7 +16,7 @@
             "plugin": "core",
             "component": "keys",
             "args": {
-                "row": 4,
+                "row": 3,
                 "col": 6,
                 "components": [
                     {
@@ -41,9 +41,9 @@
                         "plugin": "core",
                         "component": "key",
                         "args": {
-                            "label": "Google V2",
-                            "color": "#1DB954",
-                            "icon": "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_White.png",
+                            "label": "Discord",
+                            "color": "white",
+                            "icon": "https://upload.wikimedia.org/wikipedia/fr/thumb/4/4f/Discord_Logo_sans_texte.svg/1818px-Discord_Logo_sans_texte.svg.png",
                             "position": {
                                 "row": 2,
                                 "col": 2
@@ -51,7 +51,25 @@
                             "plugin": "webopener",
                             "command": "open",
                             "args": {
-                                "url": "https://www.google.com"
+                                "url": "https://discord.com/channels/@me"
+                            }
+                        }
+                    },
+                    {
+                        "plugin": "core",
+                        "component": "key",
+                        "args": {
+                            "label": "mute",
+                            "color": "white",
+                            "icon": "https://cdn-icons-png.flaticon.com/512/6594/6594302.png",
+                            "position": {
+                                "row": 3,
+                                "col": 2
+                            },
+                            "plugin": "webopener",
+                            "command": "open",
+                            "args": {
+                                "url": "https://discord.com/channels/@me"
                             }
                         }
                     }
