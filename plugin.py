@@ -7,7 +7,7 @@ class Plugin(ABC):
         self.version = version
         self.actions = {}
         self.components = {}
-        self.scripts = {}
+        self.scripts = []
         self.styles = []
 
 
@@ -31,15 +31,17 @@ class Plugin(ABC):
         self.components[name] = component
         
 
-    def register_script(self, name: str, script: dict):
+    def register_script(self, script: dict):
+        if script in self.scripts:
+            raise ValueError(f"Le script '{script}' est déjà enregistré.")
+        self.scripts.append(script)
+    
+    def get_scripts(self):
         """
-        name = nom du script
-        valeur = dict
+        Renvoie la liste des scripts enregistrés.
         """
-        if name in self.scripts:
-            raise ValueError(f"Le script '{name}' est déjà enregistré.")
-        self.scripts[name] = script
-        
+        return "\n".join(self.scripts)
+    
     def register_style(self, style: str):
         """
         style = nom du style

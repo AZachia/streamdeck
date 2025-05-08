@@ -80,6 +80,16 @@ class PluginManager:
             styles += plugin.get_styles()
         return styles
 
+    
+    def get_scripts(self):
+        """
+        Renvoie la liste des scripts de tous les plugins.
+        """
+        scripts = ""
+        for plugin in self.plugins.values():
+            scripts += plugin.get_scripts()
+        return scripts
+
     def get_plugin(self, name):
         return self.plugins.get(name)
 

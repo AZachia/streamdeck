@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, jsonify
+from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import os
 import json
@@ -41,8 +41,10 @@ def index():
                 componant.get("args", {})
             )
             
-            
-    return render_template('index.html', styles=styles, html=html)
+    
+    scripts = plugin_manager.get_scripts()
+
+    return render_template('index.html', styles=styles, html=html, scripts=scripts)
 
 @app.route('/config')
 def config_page():

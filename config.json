@@ -5,72 +5,168 @@
     "components": [
         {
             "plugin": "core",
-            "component": "background",
+            "component": "screen",
             "args": {
-                "color": "#000000",
-                "image": "https://img.freepik.com/free-vector/black-background-with-wavy-lines_52683-76524.jpg?semt=ais_hybrid&w=740"
-            }
-        },
-
-        {
-            "plugin": "core",
-            "component": "keys",
-            "args": {
-                "row": 3,
-                "col": 6,
+                "id": "main",
+                "default": true,
                 "components": [
                     {
                         "plugin": "core",
-                        "component": "key",
+                        "component": "background",
                         "args": {
-                            "label": "Google",
-                            "icon": "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_White.png",
-                            "position": {
-                                "row": 1,
-                                "col": 1
-                            },
-                            "plugin": "webopener",
-                            "command": "open",
-                            "args": {
-                                "url": "https://www.google.com"
-                            }
-                        }
-                    },
-
-                    {
-                        "plugin": "core",
-                        "component": "key",
-                        "args": {
-                            "label": "Discord",
-                            "color": "white",
-                            "icon": "https://upload.wikimedia.org/wikipedia/fr/thumb/4/4f/Discord_Logo_sans_texte.svg/1818px-Discord_Logo_sans_texte.svg.png",
-                            "position": {
-                                "row": 2,
-                                "col": 2
-                            },
-                            "plugin": "webopener",
-                            "command": "open",
-                            "args": {
-                                "url": "https://discord.com/channels/@me"
-                            }
+                            "color": "#000000",
+                            "image": "https://img.freepik.com/free-vector/black-background-with-wavy-lines_52683-76524.jpg?semt=ais_hybrid&w=740"
                         }
                     },
                     {
                         "plugin": "core",
-                        "component": "key",
+                        "component": "keys",
                         "args": {
-                            "label": "mute",
-                            "color": "white",
-                            "icon": "https://cdn-icons-png.flaticon.com/512/6594/6594302.png",
-                            "position": {
-                                "row": 3,
-                                "col": 2
-                            },
-                            "plugin": "webopener",
-                            "command": "open",
-                            "args": {
-                                "url": "https://discord.com/channels/@me"
-                            }
+                            "row": 3,
+                            "col": 6,
+                            "components": [
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "Google",
+                                        "icon": "https://img.icons8.com/m_sharp/512/FFFFFF/google-logo.png",
+                                        "position": {
+                                            "row": 1,
+                                            "col": 1
+                                        },
+                                        "plugin": "webopener",
+                                        "command": "open",
+                                        "args": {
+                                            "url": "https://www.google.com"
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "website",
+                                    "args": {
+                                        "url": "https://www.clockfaceonline.co.uk/clocks/digital/",
+                                        "position": {
+                                            "row": 1,
+                                            "col": 3,
+                                            "width": 4,
+                                            "height": 2
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "Discord",
+                                        "color": "white",
+                                        "icon": "https://upload.wikimedia.org/wikipedia/fr/thumb/4/4f/Discord_Logo_sans_texte.svg/1818px-Discord_Logo_sans_texte.svg.png",
+                                        "position": {
+                                            "row": 2,
+                                            "col": 2
+                                        },
+                                        "plugin": "webopener",
+                                        "command": "open",
+                                        "args": {
+                                            "url": "https://discord.com/channels/@me"
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "mute",
+                                        "color": "white",
+                                        "icon": "https://cdn-icons-png.flaticon.com/512/6594/6594302.png",
+                                        "position": {
+                                            "row": 3,
+                                            "col": 2
+                                        },
+                                        "plugin": "webopener",
+                                        "command": "open",
+                                        "args": {
+                                            "url": "https://discord.com/channels/@me"
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "scale",
+                                    "args": {
+                                        "position": {
+                                            "row": 3,
+                                            "col": 2,
+                                            "width": 2,
+                                            "height": 1
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "Swith to screen 2",
+                                        "color": "white",
+                                        "icon": "https://cdn-icons-png.flaticon.com/512/32/32213.png",
+                                        "position": {
+                                            "row": 3,
+                                            "col": 4
+                                        },
+                                        "plugin": "javascript",
+                                        "command": "switchScreen",
+                                        "args": {
+                                            "screen": "second"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "plugin": "core",
+            "component": "screen",
+            "args": {
+                "id": "second",
+                "components": [
+                    {
+                        "plugin": "core",
+                        "component": "background",
+                        "args": {
+                            "color": "#000000",
+                            "image": "https://c4.wallpaperflare.com/wallpaper/404/36/975/abstract-nature-dark-red-wallpaper-preview.jpg"
+                        }
+                    },
+                    {
+                        "plugin": "core",
+                        "component": "keys",
+                        "args": {
+                            "row": 3,
+                            "col": 6,
+                            "components": [
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "Swith to screen 1",
+                                        "color": "#FFFFFF",
+                                        "icon": "https://www.svgrepo.com/show/87499/left-arrow.svg",
+                                        "position": {
+                                            "row": 1,
+                                            "col": 1
+                                        },
+                                        "plugin": "javascript",
+                                        "command": "switchScreen",
+                                        "args": {
+                                            "screen": "main"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]

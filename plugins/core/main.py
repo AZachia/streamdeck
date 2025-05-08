@@ -6,6 +6,15 @@ from plugin_manager import plugin_manager
 class CorePlugin(Plugin):
     def __init__(self):
         super().__init__("core", "1.0.0")
+        
+        
+        self.register_component(
+            "screen",
+            {
+                "handler": self.screen,
+                "description": "Screen widget",
+            },
+        )
 
         
         self.register_component(
@@ -43,23 +52,40 @@ class CorePlugin(Plugin):
             },
         )
         
-        self.register_script(
-            "switchScreen",
+        self.register_component(
+            "website",
             {
-                "code": self.switchScreen(),
-                "description": "Switch to another screen",
-                "parameters": [
-                    {
-                        "name": "screen",
-                        "type": "string",
-                        "description": "Name of the screen to switch to",
-                    }
-                ]
+                "handler": self.website,
+                "description": "Website widget",
             },
         )
         
+        self.register_component(
+            "scale",
+            {
+                "handler": self.scale,
+                "description": "Scale widget",
+            },
+        )
+        
+        self.register_script(self.switchScreen())
+        
         self.register_style(
             """
+            
+            
+            .screen {
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1;
+            }
+            
+            
             .keys {
                 flex: 1;
                 display: grid;
@@ -77,7 +103,7 @@ class CorePlugin(Plugin):
                 background-color: #007BFF;
                 color: #FFFFFF;
                 border: none;
-                border-radius: 5px;
+                border-radius: 15px;
                 padding: 10px;
                 cursor: pointer;
                 font-size: 16px;
@@ -96,6 +122,14 @@ class CorePlugin(Plugin):
                 max-height: 80%;
                 object-fit: contain;
             }
+            
+            .website {
+                width: 100%;
+                height: 100%;
+                border: none;
+                border-radius: 15px;
+                overflow: hidden;
+            }
 
             """
         )
@@ -106,14 +140,47 @@ class CorePlugin(Plugin):
         Switch to another screen.
         """
         code = """
-        function switchScreen(screen) {
+        function switchScreen(args) {
+            console.log(args);
             document.querySelectorAll('.screen').forEach((el) => {
                 el.style.display = 'none';
             });
-            document.querySelector(`#{screen}`).style.display = 'block';
+            if (typeof args === 'string') {
+                document.getElementById(args).style.display = 'block';
+            } else if (typeof args === 'object') {
+                document.getElementById(args.screen).style.display = 'block';
+            }
         }
         """
         return code
+    
+    
+    def screen(self, args):
+        """
+        Generate the screens.
+        """
+        html = f"""
+        <div class="screen" id="{args.get("id")}">
+        """
+        for component in args.get('components', []):
+            if component.get("plugin") in plugin_manager.plugins:
+                html += plugin_manager.generate_component(
+                    component.get('plugin'),
+                    component.get('component'),
+                    component.get('args', {})
+                )
+        html += """
+        </div>
+        """
+        
+        if args.get("default", False):
+            self.register_script(
+                f"""
+                    switchScreen("{args.get("id")}");
+                """
+            )
+        
+        return html
     
     def keys(self, args):
         html = f"""
@@ -147,6 +214,10 @@ class CorePlugin(Plugin):
         #     <span class="label">{ args.get("label") }</span>
         # </button>
         # """
+        
+        html += """
+        </button>
+        """
 
         return html
     
@@ -154,5 +225,16 @@ class CorePlugin(Plugin):
     def background(self, args):
         return f"""
         <div class="background" style="position: fixed; z-index:-1; background-image: url({ args.get("image") }); background-size: cover; background-position: center; width: 100%; height: 100%;"></div>
-        """ 
+        """
+        
+    def website(self, args):
+        return f"""
+        <iframe src="{args.get("url")}" style="grid-column-start: {args.get("position", {}).get("col", 1)}; grid-row-start: {args.get("position", {}).get("row", 1)}; grid-column: span {args.get("position", {}).get("width", 1)}; grid-row: span {args.get("position", {}).get("height", 1)};" class="website"></iframe>
+        """
+        
+    def scale(self, args):
+        html = f"""
+        <input type="range" min="{args.get("min", 0)}" max="{args.get("max", 100)}" value="{args.get("value", 50)}" style="grid-column-start: {args.get("position", {}).get("col")}; grid-row-start: {args.get("position", {}).get("row")}; grid-column: span {args.get("position", {}).get("width")}; grid-row: span {args.get("position", {}).get("height")}; width: 100%; height: 100%;">
+        """
+        return html
 

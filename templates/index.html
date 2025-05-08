@@ -31,6 +31,11 @@
 
             if (["javascript", "js"].includes(plugin)) {
                 // TODO
+                if (typeof window[command] === 'function') {
+                    window[command](args);
+                } else {
+                    console.error(`Command ${command} not found in plugin ${plugin}`);
+                }
 
             }
 
@@ -54,6 +59,10 @@
             }
         });
 
+    </script>
+
+    <script>
+        {{ scripts | safe }}
     </script>
 
 </body>
