@@ -1,7 +1,4 @@
 {
-    "title": "Stream Deck",
-    "icon": "https://cdn-icons-png.flaticon.com/512/25/25231.png",
-    "background": "https://img.freepik.com/free-vector/black-background-with-wavy-lines_52683-76524.jpg?semt=ais_hybrid&w=740",
     "components": [
         {
             "plugin": "core",
@@ -44,6 +41,24 @@
                                 },
                                 {
                                     "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "youtube Music",
+                                        "color": "white",
+                                        "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Youtube_Music_icon.svg/2048px-Youtube_Music_icon.svg.png",
+                                        "position": {
+                                            "row": 1,
+                                            "col": 2
+                                        },
+                                        "plugin": "webopener",
+                                        "command": "open",
+                                        "args": {
+                                            "url": "https://music.youtube.com/"
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
                                     "component": "website",
                                     "args": {
                                         "url": "https://www.clockfaceonline.co.uk/clocks/digital/",
@@ -77,6 +92,21 @@
                                     "plugin": "core",
                                     "component": "key",
                                     "args": {
+                                        "label": "play/pause",
+                                        "color": "white",
+                                        "icon": "https://static.thenounproject.com/png/404075-200.png",
+                                        "position": {
+                                            "row": 3,
+                                            "col": 1
+                                        },
+                                        "plugin": "volume",
+                                        "command": "play-pause"
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
                                         "label": "mute",
                                         "color": "white",
                                         "icon": "https://cdn-icons-png.flaticon.com/512/6594/6594302.png",
@@ -84,11 +114,8 @@
                                             "row": 3,
                                             "col": 2
                                         },
-                                        "plugin": "webopener",
-                                        "command": "open",
-                                        "args": {
-                                            "url": "https://discord.com/channels/@me"
-                                        }
+                                        "plugin": "volume",
+                                        "command": "toggle"
                                     }
                                 },
                                 {
@@ -97,10 +124,12 @@
                                     "args": {
                                         "position": {
                                             "row": 3,
-                                            "col": 2,
+                                            "col": 3,
                                             "width": 2,
                                             "height": 1
-                                        }
+                                        },
+                                        "plugin": "volume",
+                                        "command": "set"
                                     }
                                 },
                                 {
@@ -108,16 +137,34 @@
                                     "component": "key",
                                     "args": {
                                         "label": "Swith to screen 2",
-                                        "color": "white",
-                                        "icon": "https://cdn-icons-png.flaticon.com/512/32/32213.png",
+                                        "color": "#FFFFFF",
+                                        "icon": "https://cdn.iconscout.com/icon/free/png-256/free-ios-weather-icon-download-in-svg-png-gif-file-formats--11-pack-user-interface-icons-461610.png?f=webp&w=256",
                                         "position": {
                                             "row": 3,
-                                            "col": 4
+                                            "col": 6
                                         },
                                         "plugin": "javascript",
                                         "command": "switchScreen",
                                         "args": {
                                             "screen": "second"
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "Brave",
+                                        "color": "#fa2507",
+                                        "icon": "https://img.icons8.com/m_sharp/512/FFFFFF/brave-web-browser.png",
+                                        "position": {
+                                            "row": 2,
+                                            "col": 1
+                                        },
+                                        "plugin": "core",
+                                        "command": "execute",
+                                        "args": {
+                                            "cmd": "brave"
                                         }
                                     }
                                 }
@@ -163,6 +210,19 @@
                                         "command": "switchScreen",
                                         "args": {
                                             "screen": "main"
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "website",
+                                    "args": {
+                                        "url": "https://api.wo-cloud.com/content/widget/?geoObjectKey=16848480&language=fr&region=FR&timeFormat=HH:mm&windUnit=kmh&systemOfMeasurement=metric&temperatureUnit=celsius",
+                                        "position": {
+                                            "row": 1,
+                                            "col": 2,
+                                            "width": 5,
+                                            "height": 3
                                         }
                                     }
                                 }

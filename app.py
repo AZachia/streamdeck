@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import os
 import json
+import socket
 
 from plugin_manager import plugin_manager
 
@@ -9,17 +10,33 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Load configuration from JSON file
-config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-if os.path.exists(config_path):
-    with open(config_path, 'r') as config_file:
-        config = json.load(config_file)
-else:
-    config = {
-        "title": "Mon Stream Deck Custom",
-        "background": "/static/fond1.jpg",
-        "keys": [],
-    }
+
+
+def get_ip_address():
+    """
+    Get the local IP address of the machine.
+    """
+    hostname = socket.gethostname()
+    ip_address = socket.gethostbyname(hostname)
+    return ip_address
+
+
+config = {
+    "title": "Mon Stream Deck Custom",
+    "background": "/static/fond1.jpg",
+    "keys": [],
+}
+
+def load_config():
+    """
+    Load configuration from a JSON file.
+    """
+    global config
+    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+    if os.path.exists(config_path):
+        with open(config_path, 'r') as config_file:
+            config = json.load(config_file)
+load_config()
     
 
 print("Configuration loaded:", config)
@@ -27,6 +44,8 @@ print("Configuration loaded:", config)
 
 @app.route('/')
 def index():
+    
+    load_config()
     
     
     styles = plugin_manager.generate_styles()
@@ -39,7 +58,7 @@ def index():
                 componant.get("plugin"),
                 componant.get("component"),
                 componant.get("args", {})
-            )
+            ) or ""
             
     
     scripts = plugin_manager.get_scripts()

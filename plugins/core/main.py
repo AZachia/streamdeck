@@ -1,6 +1,7 @@
 import json
 from plugin import Plugin
 from plugin_manager import plugin_manager
+import os
 
 
 class CorePlugin(Plugin):
@@ -130,8 +131,42 @@ class CorePlugin(Plugin):
                 border-radius: 15px;
                 overflow: hidden;
             }
+            
+            
+            .range {
+                -webkit-appearance: none;
+                top: 50%;
+                left: 50%;
+                margin: 0;
+                padding: 0;
+                width: 20rem;
+                height: 3.5rem;
+                border-radius: 1rem;
+                overflow: hidden;
+                
+            }
+            
+            input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 0;
+            box-shadow: -20rem 0 0 20rem rgb(0, 0, 0, 0.4);
+            }
+
+            input[type="range"]::-moz-range-thumb {
+            border: none;
+            width: 0;
+            box-shadow: -20rem 0 0 20rem rgb(0, 0, 0, 0.4);
+            }
 
             """
+        )
+        
+        self.register_action(
+            "execute",
+            {
+                "handler": self.execute,
+                "description": "Execute a command on the machine"
+            },
         )
     
     
@@ -203,7 +238,7 @@ class CorePlugin(Plugin):
     
     def key(self, args):
         html = f"""
-        <button onclick='sendCommand("{args.get("plugin")}", "{args.get("command")}", {json.dumps(args.get("args"))})'
+        <button onclick='sendCommand("{args.get("plugin")}", "{args.get("command", {})}", {json.dumps(args.get("args"))})'
             class="key" style="background-color: {args.get("color", "#007BFF")}; color: {args.get("text_color", "#FFFFFF")};
             grid-column-start: {args.get("position", {}).get("col")}; grid-row-start: {args.get("position", {}).get("row")};">"""
 
@@ -234,7 +269,15 @@ class CorePlugin(Plugin):
         
     def scale(self, args):
         html = f"""
-        <input type="range" min="{args.get("min", 0)}" max="{args.get("max", 100)}" value="{args.get("value", 50)}" style="grid-column-start: {args.get("position", {}).get("col")}; grid-row-start: {args.get("position", {}).get("row")}; grid-column: span {args.get("position", {}).get("width")}; grid-row: span {args.get("position", {}).get("height")}; width: 100%; height: 100%;">
-        """
+        <input type="range" min="{args.get("min", 0)}" max="{args.get("max", 100)}" value="{args.get("value", 50)}" style="grid-column-start: {args.get("position", {}).get("col")}; grid-row-start: {args.get("position", {}).get("row")}; grid-column: span {args.get("position", {}).get("width")}; grid-row: span {args.get("position", {}).get("height")}; width: 100%; height: 100%;" oninput="sendCommand('{args.get('plugin')}', '{args.get('command', {})}', """ + """{value: this.value})" class="range" />"""
         return html
+    
+    
+    def execute(self, args):
+        """
+        Execute a command on the machine.
+        """
+        print(args)
+        os.system(args.get("cmd", ""))
+        
 
