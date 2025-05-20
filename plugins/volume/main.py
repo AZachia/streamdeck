@@ -34,6 +34,40 @@ class VolumePlugin(Plugin):
             },
         )
         
+        self.register_action(
+            "get",
+            {
+                "handler": self.get_volume,
+                "description": "Get the current system volume",
+            },
+        )
+        
+        self.register_action(
+            "is_muted",
+            {
+                "handler": self.is_muted,
+                "description": "Check if the system is muted",
+            },
+        )
+        
+        self.register_action(
+            "plus",
+            {
+                "handler": self.volume_plus,
+                "description": "Increase the system volume"
+            },
+        )
+        
+        self.register_action(
+            "minus",
+            {
+                "handler": self.volume_minus,
+                "description": "Decrease the system volume"
+            },
+        )
+        
+        
+        
         
         self.register_action(
             "media",
@@ -160,4 +194,20 @@ class VolumePlugin(Plugin):
             result = subprocess.run(["pactl", "get-sink-mute", "@DEFAULT_SINK@"], capture_output=True, text=True)
             if result.returncode == 0:
                 return result.stdout.strip() == "yes"
+    
+    
+    def volume_plus(self, args):
+        """
+        Increase the system volume.
+        """
+        if platform.system() == "Linux":
+            subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"+{args.get("value", 5)}%"])
+        
+    
+    def volume_minus(self, args):
+        """
+        Decrease the system volume.
+        """
+        if platform.system() == "Linux":
+            subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"-{args.get("value", 5)}%"])
         

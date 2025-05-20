@@ -1,8 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 import os
 import json
-import socket
 
 from plugin_manager import plugin_manager
 
@@ -10,15 +9,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-
-
-def get_ip_address():
-    """
-    Get the local IP address of the machine.
-    """
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
-    return ip_address
 
 
 config = {
@@ -39,7 +29,7 @@ def load_config():
 load_config()
     
 
-print("Configuration loaded:", config)
+# print("Configuration loaded:", config)
 
 
 @app.route('/')
@@ -58,16 +48,45 @@ def index():
                 componant.get("plugin"),
                 componant.get("component"),
                 componant.get("args", {})
-            ) or ""
+            )
             
     
     scripts = plugin_manager.get_scripts()
 
     return render_template('index.html', styles=styles, html=html, scripts=scripts)
 
-@app.route('/config')
+
+
+@app.route('/live-preview', methods=['POST'])
+def live_preview():
+    req_body = request.get_json()
+    config = req_body.get('config', {})
+    
+    styles = plugin_manager.generate_styles()
+
+    html = ""
+    for componant in config.get("components", []):
+        if componant["plugin"] in plugin_manager.plugins:
+            html += (
+                plugin_manager.generate_component(
+                    componant.get("plugin"),
+                    componant.get("component"),
+                    componant.get("args", {}),
+                )
+                or ""
+            )
+
+    scripts = plugin_manager.get_scripts()
+
+    return render_template("index.html", styles=styles, html=html, scripts=scripts)
+    
+    
+    
+    
+
+@app.route('/editor')
 def config_page():
-    return render_template('config.html')
+    return render_template('editor.html')
 
 @app.route('/static/<path:filename>')
 def send_static(filename):
@@ -82,7 +101,7 @@ def handle_connect():
 def handle_command(data):
     print('Received command:', data)
     plugin, command, args = data
-    plugin_manager.execute_plugin_action(plugin, command, args)
+    plugin_manager.execute_plugin_action(plugin, command, args or {})
     
     
 @socketio.on('disconnect')

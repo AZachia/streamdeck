@@ -26,16 +26,16 @@
                                     "plugin": "core",
                                     "component": "key",
                                     "args": {
-                                        "label": "Google",
-                                        "icon": "https://img.icons8.com/m_sharp/512/FFFFFF/google-logo.png",
+                                        "label": "vsCode",
+                                        "icon": "https://code.visualstudio.com/assets/images/code-stable-white.png",
                                         "position": {
                                             "row": 1,
                                             "col": 1
                                         },
-                                        "plugin": "webopener",
-                                        "command": "open",
+                                        "plugin": "core",
+                                        "command": "execute",
                                         "args": {
-                                            "url": "https://www.google.com"
+                                            "cmd": "code"
                                         }
                                     }
                                 },
@@ -136,6 +136,24 @@
                                     "plugin": "core",
                                     "component": "key",
                                     "args": {
+                                        "label": "Swith to menu",
+                                        "color": "#FFFFFF",
+                                        "icon": "https://cdn-icons-png.flaticon.com/512/1237/1237932.png",
+                                        "position": {
+                                            "row": 3,
+                                            "col": 5
+                                        },
+                                        "plugin": "javascript",
+                                        "command": "switchScreen",
+                                        "args": {
+                                            "screen": "menu"
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
                                         "label": "Swith to screen 2",
                                         "color": "#FFFFFF",
                                         "icon": "https://cdn.iconscout.com/icon/free/png-256/free-ios-weather-icon-download-in-svg-png-gif-file-formats--11-pack-user-interface-icons-461610.png?f=webp&w=256",
@@ -226,6 +244,195 @@
                                         }
                                     }
                                 }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "plugin": "core",
+            "component":"screen",
+            "args":{
+                "id":"menu",
+                "components":[
+                    {
+                        "plugin":"core",
+                        "component":"background",
+                        "args":{
+                            "color":"#000000",
+                            "image":"https://img.freepik.com/free-vector/black-background-with-wavy-lines_52683-76524.jpg?semt=ais_hybrid&w=740"
+                        }
+                    },
+                    {
+                        "plugin":"core",
+                        "component":"keys",
+                        "args":{
+                            "row":3,
+                            "col":6,
+                            "components":[
+                                {
+                                    "plugin":"core",
+                                    "component":"key",
+                                    "args":{
+                                        "label":"Swith to screen 1",
+                                        "color":"#FFFFFF",
+                                        "icon":"https://www.svgrepo.com/show/87499/left-arrow.svg",
+                                        "position":{
+                                            "row":1,
+                                            "col":1
+                                        },
+                                        "plugin":"javascript",
+                                        "command":"switchScreen",
+                                        "args":{
+                                            "screen":"main"
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin":"core",
+                                    "component":"key",
+                                    "args":{
+                                        "label":"Swith to screen 2",
+                                        "color":"#FFFFFF",
+                                        "icon":"https://cdn.iconscout.com/icon/free/png-256/free-ios-weather-icon-download-in-svg-png-gif-file-formats--11-pack-user-interface-icons-461610.png?f=webp&w=256",
+                                        "position":{
+                                            "row":1,
+                                            "col":2
+                                        },
+                                        "plugin":"javascript",
+                                        "command":"switchScreen",
+                                        "args":{
+                                            "screen":"second"
+                                        }
+                                    }
+                                },
+                                {
+                                    "plugin":"core",
+                                    "component":"key",
+                                    "args":{
+                                        "label":"Swith to screen 3",
+                                        "color":"#FFFFFF",
+                                        "icon":"https://icons.iconarchive.com/icons/google/noto-emoji-objects/512/62971-gear-icon.png",
+                                        "position":{
+                                            "row":1,
+                                            "col":3
+                                        },
+                                        "plugin":"javascript",
+                                        "command":"switchScreen",
+                                        "args":{
+                                            "screen":"settings"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+
+                    }
+
+                ]
+            }
+        },
+        {
+            "plugin": "core",
+            "component": "screen",
+            "args": {
+                "id": "settings",
+                "components": [
+                    {
+                        "plugin": "core",
+                        "component": "background",
+                        "args": {
+                            "color": "#000000",
+                            "image": "https://img.freepik.com/free-vector/black-background-with-wavy-lines_52683-76524.jpg?semt=ais_hybrid&w=740"
+                        }
+                    },
+                    {
+                        "plugin": "core",
+                        "component": "keys",
+                        "args": {
+                            "row": 3,
+                            "col": 6,
+                            "components": [
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "mute",
+                                        "color": "white",
+                                        "icon": "https://cdn-icons-png.flaticon.com/512/6594/6594302.png",
+                                        "position": {
+                                            "row": 1,
+                                            "col": 1
+                                        },
+                                        "plugin": "volume",
+                                        "command": "toggle"
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "play/pause",
+                                        "color": "white",
+                                        "icon": "https://static.thenounproject.com/png/208046-200.png",
+                                        "position": {
+                                            "row": 1,
+                                            "col": 2
+                                        },
+                                        "plugin": "volume",
+                                        "command": "plus"
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "play/pause",
+                                        "color": "white",
+                                        "icon": "https://static-00.iconduck.com/assets.00/volume-minus-icon-512x432-g0d75p8h.png",
+                                        "position": {
+                                            "row": 1,
+                                            "col": 3
+                                        },
+                                        "plugin": "volume",
+                                        "command": "minus"
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "scale",
+                                    "args": {
+                                        "position": {
+                                            "row": 1,
+                                            "col": 5,
+                                            "width": 2,
+                                            "height": 1
+                                        },
+                                        "plugin": "volume",
+                                        "command": "set"
+                                    }
+                                },
+                                {
+                                    "plugin": "core",
+                                    "component": "key",
+                                    "args": {
+                                        "label": "Swith to menu",
+                                        "color": "#FFFFFF",
+                                        "icon": "https://cdn-icons-png.flaticon.com/512/1237/1237932.png",
+                                        "position": {
+                                            "row": 3,
+                                            "col": 6
+                                        },
+                                        "plugin": "javascript",
+                                        "command": "switchScreen",
+                                        "args": {
+                                            "screen": "menu"
+                                        }
+                                    }
+                                },
+                                {}
+
                             ]
                         }
                     }

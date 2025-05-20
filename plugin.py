@@ -33,7 +33,7 @@ class Plugin(ABC):
 
     def register_script(self, script: dict):
         if script in self.scripts:
-            raise ValueError(f"Le script '{script}' est déjà enregistré.")
+            print(f"Le script '{script}' est déjà enregistré.")
         self.scripts.append(script)
     
     def get_scripts(self):
@@ -86,13 +86,15 @@ class Plugin(ABC):
         else:
             raise ValueError(f"Le composant '{component_name}' n'est pas enregistré.")
             
-
-    def get_metadata(self):
-        return {
-            "name": self.name,
-            "version": self.version,
-            "actions": self.actions
-        }
+    def generate_key_style(self, args):
+        css = ""
+        for i in ("color", "position", "icon"):
+            if args.get(i):
+                css += f"""
+                {i}: {args.get(i)};
+                """
+        return css
+            
 
     def get_action_info(self, action_name):
         return self.actions.get(action_name)

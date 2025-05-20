@@ -69,7 +69,6 @@ class PluginManager:
         else:
             print(f"Plugin '{plugin_name}' non trouvé.")
             return None
-        return None
     
     def generate_styles(self):
         """

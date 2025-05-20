@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blockly → JSONEditor</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Blockly -->
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- JSONEditor -->
+    <link href="https://cdn.jsdelivr.net/npm/jsoneditor@9.10.0/dist/jsoneditor.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/jsoneditor@9.10.0/dist/jsoneditor.min.js"></script>
+
+    <style>
+        /* Dark theme */
+        :root {
+            --primary-dark: #1a202c;
+            --secondary-dark: #2d3748;
+            --accent-dark: #4a5568;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+        }
+
+        body {
+            background-color: var(--primary-dark);
+            color: var(--text-primary);
+        }
+
+        /* Resizable panel */
+        .resizable {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resizer {
+            width: 10px;
+            height: 100%;
+            background: var(--accent-dark);
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: col-resize;
+            z-index: 10;
+        }
+
+        /* Blockly custom theme */
+        .blocklyMainBackground {
+            fill: var(--secondary-dark) !important;
+        }
+
+        .blocklyToolboxDiv {
+            background-color: var(--secondary-dark) !important;
+        }
+
+        .blocklyFlyoutBackground {
+            fill: var(--secondary-dark) !important;
+        }
+
+        .blocklyScrollbarHandle {
+            fill: var(--accent-dark) !important;
+        }
+
+        .blocklyText {
+            fill: var(--text-primary) !important;
+        }
+
+        .blocklyPath {
+            stroke: var(--text-primary) !important;
+        }
+
+        /* JSON Editor dark theme */
+        .jsoneditor {
+            border-color: var(--accent-dark) !important;
+        }
+
+        .jsoneditor-menu {
+            background-color: var(--secondary-dark) !important;
+            border-color: var(--accent-dark) !important;
+        }
+
+        .jsoneditor-contextmenu .jsoneditor-menu {
+            background-color: var(--primary-dark) !important;
+        }
+
+        .jsoneditor-tree {
+            background-color: var(--secondary-dark) !important;
+        }
+
+        .jsoneditor-statusbar {
+            background-color: var(--secondary-dark) !important;
+            border-color: var(--accent-dark) !important;
+        }
+
+        .jsoneditor-search input {
+            background-color: var(--primary-dark) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .jsoneditor-frame {
+            background-color: var(--secondary-dark) !important;
+        }
+    </style>
+</head>
+
+<body class="h-screen m-0 p-0">
+    <main class="flex h-full overflow-hidden">
+
+        <!-- Blockly -->
+        <div class="flex-grow h-full" id="blocklyContainer">
+            <xml id="toolbox" style="display: none">
+                <category name="core" colour="#5C81A6">
+                    <block type="screen"></block>
+                    <block type="background"></block>
+                    <block type="keys"></block>
+                    <block type="key"></block>
+                </category>
+                <category name="webopener" colour="#A65C81">
+                    <block type="open"></block>
+                </category>
+                <category name="volume" colour="#81A65C">
+                    <block type="volume_key"></block>
+                    <block type="scale"></block>
+                </category>
+                <category name="javascript" colour="#A6A65C">
+                    <block type="js_switch"></block>
+                </category>
+            </xml>
+            <div id="blocklyDiv" class="w-full h-full"></div>
+        </div>
+
+        <!-- JSON side panel -->
+        <div id="jsonPanel" class="resizable h-full bg-gray-800 border-l border-gray-600 flex flex-col"
+            style="width: 30%; min-width: 300px;">
+            <div class="resizer"></div>
+            <div class="p-4 border-b border-gray-600 flex justify-between items-center">
+                <h2 class="text-lg font-bold">Generated JSON</h2>
+                <div class="flex space-x-2">
+                    <button id="generateCode"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded flex items-center">
+                        <i class="fas fa-sync-alt mr-2"></i> Generate
+                    </button>
+                    <button id="downloadCode"
+                        class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded flex items-center">
+                        <i class="fas fa-download mr-2"></i> Download
+                    </button>
+                </div>
+            </div>
+            <div id="editor" class="flex-grow"></div>
+        </div>
+
+    </main>
+
+    <script>
+        // Custom dark theme for Blockly
+        const blocklyTheme = Blockly.Theme.defineTheme('dark', {
+            'base': Blockly.Themes.Classic,
+            'componentStyles': {
+                'workspaceBackgroundColour': '#2d3748',
+                'toolboxBackgroundColour': '#1a202c',
+                'toolboxForegroundColour': '#e2e8f0',
+                'flyoutBackgroundColour': '#2d3748',
+                'flyoutForegroundColour': '#e2e8f0',
+                'flyoutOpacity': 1,
+                'scrollbarColour': '#4a5568',
+                'scrollbarOpacity': 0.7,
+            }
+        });
+
+        // 1) Blocks JSON
+        Blockly.defineBlocksWithJsonArray([
+            // Screen
+            {
+                "type": "screen",
+                "message0": "screen id %1 default %2",
+                "args0": [
+                    { "type": "field_input", "name": "id", "text": "main" },
+                    { "type": "field_checkbox", "name": "default", "checked": true }
+                ],
+                "message1": "components %1",
+                "args1": [{ "type": "input_statement", "name": "COMP" }],
+                "colour": 160,
+                "tooltip": "Defines a screen with components"
+            },
+            // Background
+            {
+                "type": "background",
+                "message0": "background color %1 image %2",
+                "args0": [
+                    { "type": "field_input", "name": "color", "text": "#000000" },
+                    { "type": "field_input", "name": "image", "text": "" }
+                ],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 230,
+                "tooltip": "Sets the background color or image"
+            },
+            // Keys container
+            {
+                "type": "keys",
+                "message0": "keys rows %1 cols %2",
+                "args0": [
+                    { "type": "field_number", "name": "row", "value": 3, "min": 1 },
+                    { "type": "field_number", "name": "col", "value": 6, "min": 1 }
+                ],
+                "message1": "components %1",
+                "args1": [{ "type": "input_statement", "name": "COMP" }],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 65,
+                "tooltip": "Creates a grid of keys with specified rows and columns"
+            },
+            // Generic key
+            {
+                "type": "key",
+                "message0": "key label %1 color %2 icon %3 row %4 col %5",
+                "args0": [
+                    { "type": "field_input", "name": "label", "text": "Key" },
+                    { "type": "field_input", "name": "color", "text": "white" },
+                    { "type": "field_input", "name": "icon", "text": "" },
+                    { "type": "field_number", "name": "row", "value": 1, "min": 1 },
+                    { "type": "field_number", "name": "col", "value": 1, "min": 1 }
+                ],
+                "message1": "action %1",
+                "args1": [
+                    {
+                        "type": "input_value",
+                        "name": "ACTION",
+                        "check": ["open", "volume_key", "scale", "js_switch"]
+                    }
+                ],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 20,
+                "tooltip": "Creates a key with specified properties and action"
+            },
+            // Open URL
+            {
+                "type": "open",
+                "message0": "open url %1",
+                "args0": [{ "type": "field_input", "name": "url", "text": "https://www.google.com" }],
+                "output": null,
+                "colour": 290,
+                "tooltip": "Opens a URL in the browser"
+            },
+            // Volume play/pause or toggle
+            {
+                "type": "volume_key",
+                "message0": "volume %1",
+                "args0": [
+                    {
+                        "type": "field_dropdown",
+                        "name": "CMD",
+                        "options": [
+                            ["play/pause", "play-pause"],
+                            ["toggle mute", "toggle"]
+                        ]
+                    }
+                ],
+                "output": null,
+                "colour": 150,
+                "tooltip": "Controls volume functions"
+            },
+            // Scale (slider)
+            {
+                "type": "scale",
+                "message0": "volume slider",
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 150,
+                "tooltip": "Creates a volume slider control"
+            },
+            // JS switchScreen
+            {
+                "type": "js_switch",
+                "message0": "switch to screen %1",
+                "args0": [{ "type": "field_input", "name": "screen", "text": "second" }],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 80,
+                "tooltip": "Switches to another screen"
+            }
+        ]);
+
+        // 2) Inject Blockly with dark theme
+        const workspace = Blockly.inject('blocklyDiv', {
+            toolbox: document.getElementById('toolbox'),
+            theme: blocklyTheme,
+            grid: {
+                spacing: 20,
+                length: 3,
+                colour: '#4a5568',
+                snap: true
+            },
+            zoom: {
+                controls: true,
+                wheel: true,
+                startScale: 1.0,
+                maxScale: 3,
+                minScale: 0.3,
+                scaleSpeed: 1.2
+            },
+            move: {
+                scrollbars: {
+                    horizontal: true,
+                    vertical: true
+                },
+                drag: true,
+                wheel: true
+            }
+        });
+
+        // 3) JSONEditor with dark theme
+        const editor = new JSONEditor(document.getElementById('editor'), {
+            mode: 'tree',
+            modes: ['tree', 'code', 'form', 'text', 'view'],
+            onError: err => console.error(err),
+            theme: 'dark',
+            search: true,
+            history: true,
+            navigationBar: true,
+            statusBar: true,
+            mainMenuBar: true
+        });
+
+        const TYPE_MAP = {
+            'screen': b => ({
+                plugin: "core",
+                component: "screen",
+                args: {
+                    id: b.getFieldValue('id'),
+                    default: b.getFieldValue('default') === 'TRUE',
+                    components: blockList(b, 'COMP')
+                }
+
+            }),
+            'background': b => {
+                const bg = { plugin: "core", component: "background", args: {} }
+                const color = b.getFieldValue('color');
+                const image = b.getFieldValue('image');
+                if (color) bg.args.color = color;
+                if (image) bg.args.image = image;
+                return bg;
+            },
+            'keys': b => ({
+                plugin: "core",
+                component: 'keys',
+                args: {
+                    rows: +b.getFieldValue('row'),
+                    cols: +b.getFieldValue('col'),
+
+                    components: blockList(b, 'COMP')
+                }
+            }),
+            'key': b => {
+                const actionBlock = b.getInputTargetBlock('ACTION');
+                let action = {};
+
+                if (actionBlock) {
+                    action = {
+                        type: actionBlock.type,
+                        ...getActionArgs(actionBlock)
+                    };
+                }
+
+                return {
+                    plugin: "core",
+                    component: 'key',
+                    args: {
+                        label: b.getFieldValue('label'),
+                        color: b.getFieldValue('color'),
+                        icon: b.getFieldValue('icon') || undefined,
+                        position: {
+                            row: +b.getFieldValue('row'),
+                            col: +b.getFieldValue('col')
+                        },
+                        plugin: action.plugin || undefined,
+                        action: action.command || undefined,
+                        args: action.args || undefined
+
+                    },
+                    
+                };
+            },
+            'open': b => ({
+                type: 'open',
+                url: b.getFieldValue('url')
+            }),
+            'volume_key': b => ({
+                type: 'volume_key',
+                command: b.getFieldValue('CMD')
+            }),
+            'scale': b => ({
+                type: 'volume_scale'
+            }),
+            'js_switch': b => ({
+                type: 'js_switch',
+                screen: b.getFieldValue('screen')
+            })
+        };
+
+        // Helper to get action arguments
+        function getActionArgs(block) {
+            if (!block) return {};
+
+            switch (block.type) {
+                case 'open':
+                    return { plugin: "webopener", command: "open", args: { url: block.getFieldValue("url") } }
+                case 'volume_key':
+                    return { plugin: "volulme", command: block.getFieldValue('CMD') };
+                case 'js_switch':
+                    return { plugin: "javascript", command: "screen", args: { screen: block.getFieldValue('screen') } };
+                default:
+                    return {};
+            }
+        }
+
+        // Improved block list processing
+        function blockList(block, inputName) {
+            const arr = [];
+            const stack = block.getInputTargetBlock(inputName);
+            let b = stack;
+
+            while (b) {
+                const fn = TYPE_MAP[b.type];
+                if (fn) {
+                    const component = fn(b);
+                    if (component) arr.push(component);
+                }
+                b = b.getNextBlock();
+            }
+
+            return arr.length ? arr : undefined;
+        }
+
+        // Generate complete JSON structure
+        function generateJSON() {
+            const tops = workspace.getTopBlocks(true);
+            const components = tops.map(b => TYPE_MAP[b.type](b));
+
+            return {
+                version: "1.0",
+                timestamp: new Date().toISOString(),
+                components: components
+            };
+        }
+
+        // Auto-update JSON when blocks change
+        workspace.addChangeListener(() => {
+            try {
+                const json = generateJSON();
+                editor.update(json);
+            }
+            catch (e) {
+                console.warn('Error generating JSON:', e);
+            }
+        });
+
+        // Initialize with empty JSON
+        editor.set({
+            components: [],
+            info: "Start building your configuration with blocks"
+        });
+
+        // Generate button handler
+        document.getElementById('generateCode').addEventListener('click', () => {
+            const json = generateJSON();
+            editor.update(json);
+
+            // Show success notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg';
+            notification.textContent = 'JSON generated successfully!';
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        });
+
+        // Download button handler
+        document.getElementById('downloadCode').addEventListener('click', () => {
+            const json = generateJSON();
+            const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'config-' + new Date().toISOString().slice(0, 10) + '.json';
+            a.click();
+
+            // Show download notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded shadow-lg';
+            notification.textContent = 'Download started!';
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        });
+
+        // Resizable panel functionality
+        const resizer = document.querySelector('.resizer');
+        const panel = document.getElementById('jsonPanel');
+        let isResizing = false;
+        let lastX = 0;
+        let panelWidth = panel.offsetWidth;
+
+        resizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            lastX = e.clientX;
+            document.body.style.cursor = 'col-resize';
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+                document.body.style.cursor = '';
+                document.removeEventListener('mousemove', handleMouseMove);
+            });
+        });
+
+        function handleMouseMove(e) {
+            if (!isResizing) return;
+            const dx = lastX - e.clientX;
+            lastX = e.clientX;
+            panelWidth += dx;
+
+            // Set min and max width constraints
+            panelWidth = Math.max(300, Math.min(window.innerWidth * 0.6, panelWidth));
+            panel.style.width = `${panelWidth}px`;
+        }
+
+        // Make sure the editor fills the available space
+        function resizeEditor() {
+            const editorElement = document.getElementById('editor');
+            if (editorElement) {
+                editorElement.style.height = `${panel.offsetHeight - 60}px`;
+            }
+        }
+
+        // Initial resize and window resize handler
+        resizeEditor();
+        window.addEventListener('resize', resizeEditor);
+    </script>
+</body>
+
+</html>

@@ -2,6 +2,7 @@ from plugin import Plugin
 import webbrowser
 
 
+
 class WebOpenerPlugin(Plugin):
     def __init__(self):
         super().__init__("webopener", "1.0.0")
