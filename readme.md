@@ -1,7 +1,7 @@
 # Stream Deck
 
 ### A modern, open-source, cross-platform, and 100% customizable and extensible Stream Deck app
-### Transform you old phone into a Stream Deck for free, just a webbrowser needed
+Transform you old phone into a Stream Deck for free, just a webbrowser needed
 
 
 ![Logo](./assets/screenshot.png)
@@ -27,7 +27,7 @@ To customize the app, you must edit the `config.json` file.
 Once the config is set up as you want, you can run the app with the following command:
 
 ```bash
-python main.py
+python app.py
 ```
 
 and then open the URL in every device you want to use as a stream deck (it is the second ip in displayed in the terminal, it's your local ip address, and the port is 5000)
